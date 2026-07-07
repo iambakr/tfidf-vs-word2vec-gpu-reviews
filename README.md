@@ -84,19 +84,15 @@ This research addresses this challenge by comparing two mainstream text represen
 
 ## ⚙️ Methodology
 
+```mermaid
+flowchart TD
+    A["📥 Data Collection (Amazon)"] --> B["🧹 Text Preprocessing (NLP)"]
+    B --> C["🔧 Feature Engineering (TF-IDF / Word2Vec)"]
+    C --> D["🤖 Model Training (4 classifiers)"]
+    D --> E["📊 Evaluation & Statistical Testing"]
+    E --> F["💡 Business Insights"]
 ```
-┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
-│      Data      │     │      Text      │     │    Feature     │     │     Model      │
-│   Collection   │────▶│ Preprocessing  │────▶│  Engineering   │────▶│    Training   │
-│    (Amazon)    │     │     (NLP)      │     │ (TF-IDF / W2V) │     │   (4 models)   │
-└────────────────┘     └────────────────┘     └────────────────┘     └────────────────┘
-                                                                              │
-                       ┌────────────────┐     ┌────────────────┐              │
-                       │    Business    │     │  Evaluation &  │              │
-                       │    Insights    │◀────│ Stat. Testing  │◀────────────┘
-                       └────────────────┘     └────────────────┘
 
-```
 
 
 
