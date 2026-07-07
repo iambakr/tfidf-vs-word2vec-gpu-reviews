@@ -84,7 +84,7 @@ This research addresses this challenge by comparing two mainstream text represen
 
 ## ⚙️ Methodology
 
-```mermaid
+```
 ┌────────────────┐     ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
 │      Data      │     │      Text      │     │    Feature     │     │     Model      │
 │   Collection   │────▶│ Preprocessing  │────▶│  Engineering   │────▶│    Training   │
