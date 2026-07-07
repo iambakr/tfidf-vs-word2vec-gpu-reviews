@@ -1,0 +1,20 @@
+# Thesis source document — never commit (GitHub assets are Markdown + code only)
+*.docx
+*.doc
+*.pdf
+
+# Private project instructions
+CLAUDE.md
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Raw data (only the anonymized sample in data/ is public)
+data/raw/
