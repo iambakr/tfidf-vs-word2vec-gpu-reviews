@@ -241,7 +241,7 @@ the real 2,989-review corpus, which is not redistributed — see [`data/README.m
 **Kai-Tih Hong (洪凱迪)**  
 M.S. in Statistics, National Taipei University (2025)
 
-🔗 [LinkedIn](#) *(add your LinkedIn URL)*  
+🔗 [LinkedIn](https://www.linkedin.com/in/kaitih-hong-6289b164)   
 
 ### Core Competencies
 - **Natural Language Processing** — Text preprocessing, feature engineering, word embeddings
