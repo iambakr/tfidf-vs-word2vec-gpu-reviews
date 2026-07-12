@@ -74,6 +74,14 @@ To address class imbalance, reviews were binarized:
 
 **Total non-text features:** 1 target + 6 numerical + 16 one-hot = 23 variables
 
+### 2.3 How These Features Enter the Models (Hybrid Feature Strategy)
+
+**All 52 experimental configurations use hybrid feature sets:** the text features (TF-IDF-selected terms or Word2Vec embeddings) are concatenated with the 22 metadata features above (6 numerical + 16 one-hot) to form the final training matrix. The dimension labels used throughout this repository (258–1,292 for TF-IDF; 100–300 for Word2Vec) refer to the **text-feature portion only**.
+
+This is confirmed by the feature-importance analysis in the thesis (Fig. 6.2.1): metadata features such as `Tokens` (review length) and `chipset.4070_Ti` rank among the top-15 predictors of the best mRMR models.
+
+**Leakage note.** Product attributes (Brand, Chipset, VRAM, Volume) are fixed properties known at prediction time and pose no leakage risk. `Helpful` votes, however, accumulate *after* a review is posted — a freshly scraped review starts at 0 — so in a real-time deployment this feature would be systematically lower than in the training data (see the deployment caveat in [`PAPER.md`](./PAPER.md), §7).
+
 ---
 
 ## 3. Text Preprocessing (NLP)
@@ -258,6 +266,20 @@ $$L(\phi) = \sum_{i=1}^{n} l(y_i, \hat{y}_i) + \sum_{k=1}^{K} \Omega(f_k)$$
 - **10-fold stratified cross-validation**
 - **30 repetitions** → 300 evaluation rounds per model
 - Stratification preserves BAD:GOOD ratio in each fold
+
+### Computing Environment (Thesis Table 5.4)
+
+| Component | Specification |
+|---|---|
+| Machine | Mac Mini M4 Pro (2024) |
+| CPU | 12-core (8 performance + 4 efficiency cores) |
+| RAM | 48 GB |
+| GPU | 16-core |
+| OS | macOS Sequoia 15.6 |
+| Language | R 4.5.0 |
+| Key packages | quanteda · recipes 1.3.1 · tidymodels 1.3.0 |
+
+All training-time figures reported in [`RESULTS.md`](./RESULTS.md) were measured in this environment. The full `sessionInfo()` output will accompany the analysis scripts in `src/`.
 
 ---
 

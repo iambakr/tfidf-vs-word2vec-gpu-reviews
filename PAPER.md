@@ -52,7 +52,7 @@ If a method works here, it works on easier corpora.
 | Brand coverage | GIGABYTE 40.1%, ASUS 33.5%, MSI 26.5% |
 | Chipset coverage | Full RTX 40 range; top: 4060 (19.4%), 4090 (16.5%), 4070 (16.0%) |
 
-Reviews include metadata (brand, chipset, VRAM, review length, sales-volume proxy) that was merged with text features into hybrid feature sets. The 4.76:1 class imbalance is not a nuisance — it *is* the business problem: negative reviews are rare, and rare events are the ones worth detecting.
+Reviews include metadata — brand, chipset, and VRAM (one-hot encoded), review length, helpful votes, image/video counts, and physical card volume (L×W×H, a thermal-design proxy) — that was merged with text features into hybrid feature sets for every model configuration. The 4.76:1 class imbalance is not a nuisance — it *is* the business problem: negative reviews are rare, and rare events are the ones worth detecting.
 
 ## 3. Methodology
 
@@ -99,7 +99,7 @@ Lemmatization was chosen over stemming to preserve word semantics (critical for 
 
 ### 3.4 Classifiers and evaluation
 
-Four classifiers spanning the main model families: **SVM (Linear)**, **SVM (RBF)**, **Random Forest**, **XGBoost**. Hyperparameters were tuned by randomized search; class imbalance was addressed with undersampling in the experimental design.
+Four classifiers spanning the main model families: **SVM (Linear)**, **SVM (RBF)**, **Random Forest**, **XGBoost**. Hyperparameters were tuned by randomized search (30 sampled configurations per model, selected by mean CV recall with F1 as tiebreaker). Class imbalance was handled at the evaluation-design level: the ~4.76:1 GOOD:BAD ratio was preserved by stratification in both the train/test split and every CV fold, and models were selected recall-first so the rare negative class drives optimization. Resampling techniques such as SMOTE were deliberately left as future work (see §7).
 
 **Recall-first evaluation.** In this application, a false negative (missing a real complaint) is far more expensive than a false positive (flagging a happy customer for review). Models were therefore ranked primarily by **recall on the BAD class**, with **F1** as the secondary, balance-oriented criterion.
 
@@ -155,7 +155,11 @@ Bigram network analysis reveals an asymmetry with practical consequences:
 
 ### 5.2 A monitoring dictionary, validated by the models
 
-Feature-importance analysis of the top TF-IDF models quantifies which words actually drive classification: *great, quiet, love* on the positive side; **return, annoy, terrible, refund** as the shared vocabulary of complaint. Projecting the Word2Vec vectors to 2-D (PCA) shows semantically coherent clusters — a "defect & return" region (*faulty, return, refund*), a "gaming performance & specs" region (*cyberpunk, vram, dlss, core, memory*), and a "physical fit" region (*form, factor, size, small, large*).
+Feature-importance analysis of the top TF-IDF models (mRMR 258 dims + SVM Linear / SVM RBF; thesis Fig. 6.2.1) quantifies which features actually drive classification: *great, quiet, love* on the positive side; **return, annoy, terrible, refund** as the shared vocabulary of complaint. Notably, two non-text features also reach the top 15 — **`Tokens`** (review length) and **`chipset.4070_Ti`**, which the thesis flags as a product-tier "hotspot" term — direct evidence that the hybrid text + metadata features carry real signal.
+
+![Top-15 feature importance, mRMR 258 + SVM Linear / RBF](./results/feature_importance_top15.png)
+
+Projecting the Word2Vec vectors to 2-D (PCA) shows semantically coherent clusters — a "defect & return" region (*faulty, return, refund*), a "gaming performance & specs" region (*cyberpunk, vram, dlss, core, memory*), and a "physical fit" region (*form, factor, size, small, large*).
 
 **Practical use:** these validated keyword sets form a monitoring dictionary that can be deployed today on CRM tickets, community forums, and social channels for real-time triage and topic routing — no model retraining required.
 
@@ -180,6 +184,10 @@ Nothing in the pipeline is GPU-specific. To transfer it to another domain (lapto
 ## 7. Limitations & Future Work
 
 **Limitations.** Amazon's API caps retrieval at ~100 reviews per product, biasing samples for popular items (sampling bias); results come from one platform, one product line, and English text only. Findings should be read as a rigorous case study, not a universal ranking.
+
+**Why classical methods (and not BERT)?** The benchmark was deliberately scoped to pre-transformer methods: TF-IDF features are human-readable words (a compliance and stakeholder-communication advantage), and both feature families train at a fraction of transformer cost. As the thesis notes (citing Wang & Manning, 2012), well-tuned linear models over bag-of-words/TF-IDF features can rival far more complex models on some datasets — making them the right baseline to beat before reaching for heavier architectures. The known trade-off, also acknowledged in the thesis, is that these representations ignore word order and negation (e.g., "not bad").
+
+**Deployment caveat.** One metadata feature, `Helpful` (community votes), accumulates *after* a review is posted; a newly scraped review always starts at 0. A production system should expect this feature to contribute less signal at inference time than it did in training.
 
 **Future directions.**
 

@@ -112,6 +112,8 @@ flowchart TD
 | **TF-IDF** + mRMR Feature Selection | Min-redundancy max-relevance filtering | 258, 517, 776, 1034, 1292 |
 | **Word2Vec** (Skip-gram) | Semantic word embedding | 100, 200, 300 |
 
+> All 13 feature sets are **hybrid**: text features (dimensions above) + 22 metadata features (brand/chipset/VRAM one-hot, review length, images, etc.). See [`METHODOLOGY.md`](./METHODOLOGY.md) §2.3.
+
 ### Machine Learning Models (4 classifiers × 13 feature sets = 52 configurations)
 
 | Model | Type | Why Selected |

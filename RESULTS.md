@@ -3,6 +3,10 @@
 > All 52 model configurations across TF-IDF (MI & mRMR) and Word2Vec feature sets.  
 > For methodology details, see [`METHODOLOGY.md`](./METHODOLOGY.md).
 
+> [!NOTE]
+> **Two kinds of numbers are reported here — don't mix them.**
+> Sections 1–3 report single-point performance on the **held-out test set** (897 reviews, never touched during training) — the deployment-facing numbers. Section 4 reports **medians across 300 cross-validation rounds** (30 × 10-fold on the training set) — the distributions used for the Friedman/Dunn statistical tests. CV medians and test-set values for the same configuration therefore differ slightly by design.
+
 ---
 
 ## Table of Contents
@@ -168,6 +172,10 @@
 | XGBoost | 0.843 | 0.895 | 0.541 | **0.594** | 0.566 | 14,011 |
 
 > **mRMR Summary:** Shows a clear "dimension-diminishing" effect — SVM Linear recall drops from **0.626 (258d) → 0.361 (1292d)**. Low-dimensional mRMR features are more effective.
+
+![mRMR dimensionality decay by classifier](./results/dimensionality_decay.png)
+
+The decay concentrates in the margin-based SVMs, while the tree ensembles (Random Forest, XGBoost) stay nearly flat across 258→1,292 dims — their built-in feature subsampling absorbs the redundant, low-relevance terms that mRMR admits at higher selection percentages.
 
 ---
 
