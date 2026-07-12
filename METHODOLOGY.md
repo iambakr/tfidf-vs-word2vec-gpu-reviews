@@ -269,7 +269,7 @@ $$L(\phi) = \sum_{i=1}^{n} l(y_i, \hat{y}_i) + \sum_{k=1}^{K} \Omega(f_k)$$
 - **30 repetitions** → 300 evaluation rounds per model
 - Stratification preserves BAD:GOOD ratio in each fold
 
-### Computing Environment (Thesis Table 5.4)
+### Experimental Setup (Thesis Table 5.4)
 
 | Component | Specification |
 |---|---|

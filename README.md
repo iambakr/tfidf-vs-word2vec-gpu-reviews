@@ -35,7 +35,7 @@
 - [Methodology](#-methodology)
 - [Key Results](#-key-results)
 - [Business Applications](#-business-applications)
-- [Tech Stack](#-tech-stack)
+- [Experimental Setup](#-experimental-setup)
 - [Repository Structure](#-repository-structure)
 - [Detailed Documentation](#-detailed-documentation)
 - [About the Author](#-about-the-author)
@@ -199,7 +199,7 @@ The framework enables automated comparison of consumer sentiment **across brands
 
 ---
 
-## 🛠 Tech Stack
+## 🛠 Experimental Setup
 
 | Category | Tools |
 |---|---|
@@ -227,7 +227,7 @@ The framework enables automated comparison of consumer sentiment **across brands
     └── README.md                   # Schema + real-corpus reference statistics
 ```
 
-All analysis code is written in **R** (see Tech Stack above). All reported results come from
+All analysis code is written in **R** (see Experimental Setup above). All reported results come from
 the real 2,989-review corpus, which is not redistributed — see [`data/README.md`](./data/README.md).
 
 ---
