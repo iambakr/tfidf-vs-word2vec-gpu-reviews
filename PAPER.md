@@ -1,3 +1,5 @@
+**English** | [繁體中文](./PAPER.zh-TW.md)
+
 # TF-IDF vs. Word2Vec for Sentiment Classification of Technical Product Reviews
 
 ### A Case Study on 2,989 Amazon Reviews of NVIDIA RTX 40 Series Graphics Cards

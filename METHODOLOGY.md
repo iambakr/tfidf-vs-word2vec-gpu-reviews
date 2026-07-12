@@ -1,3 +1,5 @@
+**English** | [繁體中文](./METHODOLOGY.zh-TW.md)
+
 # 📐 Detailed Methodology
 
 > Full technical documentation for the research pipeline.  

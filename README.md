@@ -1,3 +1,5 @@
+**English** | [繁體中文](./README.zh-TW.md) | 🌐 [Interactive bilingual page](https://iambakr.github.io/tfidf-vs-word2vec-gpu-reviews/)
+
 # 📊 Comparative Analysis of TF-IDF vs. Word2Vec for Sentiment Classification
 
 ### A Case Study on NVIDIA RTX 40 Series GPU Reviews from Amazon

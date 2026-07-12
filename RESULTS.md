@@ -1,3 +1,5 @@
+**English** | [繁體中文](./RESULTS.zh-TW.md)
+
 # 📊 Complete Experimental Results
 
 > All 52 model configurations across TF-IDF (MI & mRMR) and Word2Vec feature sets.  

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en" class="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TF-IDF vs. Word2Vec — GPU Review Sentiment Classification | Kai-Tih Hong</title>
+<meta name="description" content="Comparative analysis of TF-IDF and Word2Vec for sentiment classification of 2,989 Amazon NVIDIA RTX 40 GPU reviews. M.S. thesis portfolio by Kai-Tih Hong.">
+<meta property="og:title" content="TF-IDF vs. Word2Vec — GPU Review Sentiment Classification">
+<meta property="og:description" content="Word2Vec + XGBoost reached 73.5% negative-review recall vs. 62.6% for the best TF-IDF pipeline (+17.4% relative). 52 model configurations, 300 CV rounds, Friedman + Dunn's tests.">
+<style>
+  :root{
+    --accent:#4f46e5; --accent-2:#10b981;
+    --ink:#1f2937; --ink-soft:#4b5563; --ink-faint:#6b7280;
+    --bg:#ffffff; --bg-soft:#f8fafc; --line:#e5e7eb; --card:#ffffff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+       color:var(--ink);background:var(--bg);line-height:1.7;font-size:16px}
+  /* ---- language switching ---- */
+  html.en .zh{display:none !important}
+  html.zh .en{display:none !important}
+  /* ---- header ---- */
+  header{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+         border-bottom:1px solid var(--line)}
+  .nav{max-width:960px;margin:0 auto;padding:.65rem 1.25rem;display:flex;align-items:center;gap:1rem}
+  .nav .brand{font-weight:700;font-size:.95rem;color:var(--ink);text-decoration:none;flex:1;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lang-toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex-shrink:0}
+  .lang-toggle button{border:0;background:transparent;padding:.35rem .9rem;font-size:.85rem;cursor:pointer;
+                      color:var(--ink-faint);font-family:inherit}
+  .lang-toggle button.active{background:var(--accent);color:#fff;font-weight:600}
+  /* ---- hero ---- */
+  .hero{background:linear-gradient(135deg,#111827 0%,#1e1b4b 60%,#312e81 100%);color:#fff;
+        padding:4rem 1.25rem 3.5rem;text-align:center}
+  .hero .kicker{display:inline-block;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;
+                color:#a5b4fc;border:1px solid rgba(165,180,252,.4);border-radius:999px;
+                padding:.25rem .9rem;margin-bottom:1.25rem}
+  .hero h1{font-size:clamp(1.5rem,4vw,2.4rem);line-height:1.35;max-width:820px;margin:0 auto .9rem}
+  .hero p.sub{color:#c7d2fe;max-width:680px;margin:0 auto 1.75rem;font-size:1.02rem}
+  .hero .meta{color:#818cf8;font-size:.9rem}
+  .hero .cta{margin-top:1.9rem;display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:.6rem 1.35rem;border-radius:8px;text-decoration:none;font-size:.92rem;font-weight:600}
+  .btn-primary{background:var(--accent-2);color:#fff}
+  .btn-ghost{border:1px solid rgba(255,255,255,.45);color:#fff}
+  .btn:hover{filter:brightness(1.08)}
+  /* ---- stats strip ---- */
+  .stats{max-width:960px;margin:-2rem auto 0;padding:0 1.25rem;position:relative;z-index:2;
+         display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.9rem}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1rem;
+        text-align:center;box-shadow:0 6px 18px rgba(17,24,39,.07)}
+  .stat .num{font-size:1.55rem;font-weight:800;color:var(--accent)}
+  .stat .lbl{font-size:.82rem;color:var(--ink-faint);margin-top:.15rem}
+  /* ---- sections ---- */
+  main{max-width:960px;margin:0 auto;padding:2.5rem 1.25rem 4rem}
+  section{margin-top:3.2rem}
+  h2{font-size:1.45rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid var(--accent);
+     display:inline-block}
+  h3{font-size:1.08rem;margin:1.5rem 0 .6rem}
+  p{margin-bottom:.9rem;color:var(--ink-soft)}
+  strong{color:var(--ink)}
+  ul{margin:0 0 1rem 1.4rem;color:var(--ink-soft)}
+  li{margin-bottom:.35rem}
+  /* ---- tables ---- */
+  .tbl-wrap{overflow-x:auto;margin:1rem 0}
+  table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:520px}
+  th,td{border:1px solid var(--line);padding:.55rem .8rem;text-align:left}
+  th{background:var(--bg-soft);font-weight:700}
+  td.best{font-weight:700;color:var(--accent)}
+  /* ---- figures ---- */
+  figure{margin:1.6rem 0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+  figure img{display:block;width:100%;height:auto}
+  figcaption{padding:.7rem 1rem;font-size:.85rem;color:var(--ink-faint);background:var(--bg-soft);
+             border-top:1px solid var(--line)}
+  /* ---- cards ---- */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-top:1.2rem}
+  .card{border:1px solid var(--line);border-radius:12px;padding:1.15rem 1.2rem;background:var(--card)}
+  .card h4{font-size:.98rem;margin-bottom:.45rem}
+  .card p{font-size:.88rem;margin:0}
+  .pill{display:inline-block;background:#eef2ff;color:var(--accent);border-radius:999px;
+        padding:.1rem .65rem;font-size:.78rem;font-weight:600;margin-bottom:.55rem}
+  /* ---- pipeline ---- */
+  .pipeline{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin:1.1rem 0}
+  .step{background:var(--bg-soft);border:1px solid var(--line);border-radius:8px;padding:.5rem .85rem;
+        font-size:.85rem;font-weight:600}
+  .arrow{color:var(--ink-faint)}
+  /* ---- callout ---- */
+  .callout{border-left:4px solid var(--accent-2);background:#ecfdf5;border-radius:0 10px 10px 0;
+           padding:1rem 1.2rem;margin:1.3rem 0}
+  .callout p{margin:0;color:#065f46}
+  /* ---- footer ---- */
+  footer{border-top:1px solid var(--line);background:var(--bg-soft);padding:2.2rem 1.25rem;text-align:center;
+         font-size:.88rem;color:var(--ink-faint)}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  a.inline{color:var(--accent);text-decoration:none}
+  a.inline:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a class="brand" href="#top">
+      <span class="en">TF-IDF vs. Word2Vec · GPU Review Sentiment</span>
+      <span class="zh">TF-IDF vs. Word2Vec · GPU 評論情感分類</span>
+    </a>
+    <div class="lang-toggle" role="group" aria-label="Language">
+      <button id="btn-en" onclick="setLang('en')">English</button>
+      <button id="btn-zh" onclick="setLang('zh')">繁體中文</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <span class="kicker">
+    <span class="en">M.S. Thesis · Statistics · NLP × Machine Learning</span>
+    <span class="zh">碩士論文 · 統計學 · NLP × 機器學習</span>
+  </span>
+  <h1>
+    <span class="en">Comparative Analysis of TF-IDF vs. Word2Vec for Sentiment Classification</span>
+    <span class="zh">TF-IDF 與 Word2Vec 文本分類比較研究</span>
+  </h1>
+  <p class="sub">
+    <span class="en">A case study on 2,989 Amazon reviews of NVIDIA RTX 40 Series GPUs — turning unstructured consumer feedback into product and market intelligence.</span>
+    <span class="zh">以 2,989 篇 Amazon NVIDIA RTX 40 系列顯示卡評論為案例——將非結構化的消費者評論轉化為產品優化與市場情報。</span>
+  </p>
+  <div class="meta">
+    <span class="en">Kai-Tih Hong (洪凱迪) · M.S. in Statistics, National Taipei University · July 2025</span>
+    <span class="zh">洪凱迪 Kai-Tih Hong · 國立臺北大學統計學系碩士 · 2025 年 7 月</span>
+  </div>
+  <div class="cta">
+    <a class="btn btn-primary" href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews" target="_blank" rel="noopener">
+      <span class="en">View on GitHub</span><span class="zh">前往 GitHub</span>
+    </a>
+    <a class="btn btn-ghost" href="https://www.linkedin.com/in/kaitih-hong-6289b164" target="_blank" rel="noopener">LinkedIn</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">2,989</div><div class="lbl">
+    <span class="en">Amazon verified reviews</span><span class="zh">Amazon 認證購買評論</span></div></div>
+  <div class="stat"><div class="num">52</div><div class="lbl">
+    <span class="en">model configurations</span><span class="zh">組模型配置</span></div></div>
+  <div class="stat"><div class="num">300</div><div class="lbl">
+    <span class="en">CV rounds per model (30×10-fold)</span><span class="zh">輪交叉驗證（30×10-fold）</span></div></div>
+  <div class="stat"><div class="num">+17.4%</div><div class="lbl">
+    <span class="en">relative recall lift, Word2Vec vs. TF-IDF</span><span class="zh">Word2Vec 對 TF-IDF 的召回率相對提升</span></div></div>
+</div>
+
+<main>
+
+<section id="tldr">
+  <h2><span class="en">TL;DR</span><span class="zh">重點摘要</span></h2>
+  <ul>
+    <li class="en">Built an <strong>end-to-end NLP pipeline</strong> in R to classify Amazon GPU reviews into positive / negative sentiment.</li>
+    <li class="zh">以 R 建置<strong>端到端 NLP 流程</strong>，將 Amazon 顯示卡評論分類為正面／負面情感。</li>
+    <li class="en"><strong>Word2Vec (Skip-gram) significantly outperformed TF-IDF</strong> across all four classifiers — validated with Friedman + Dunn's tests (Holm correction), not just point estimates.</li>
+    <li class="zh"><strong>Word2Vec（Skip-gram）在全部四種分類器上皆顯著優於 TF-IDF</strong>——以 Friedman 檢定 + Dunn's 檢定（Holm 校正）驗證，而非僅比較單點數值。</li>
+    <li class="en">Best negative-review detection: <strong>Word2Vec 300d + XGBoost → recall 0.735</strong> (best TF-IDF: 0.626).</li>
+    <li class="zh">負評偵測最佳組合：<strong>Word2Vec 300 維 + XGBoost → 召回率（Recall）0.735</strong>（TF-IDF 最佳僅 0.626）。</li>
+    <li class="en">Best balanced model: <strong>Word2Vec 300d + SVM RBF → F1 = 0.694</strong>.</li>
+    <li class="zh">最佳平衡模型：<strong>Word2Vec 300 維 + SVM RBF → F1 = 0.694</strong>。</li>
+    <li class="en">mRMR feature selection proved more efficient than Mutual Information for TF-IDF pipelines.</li>
+    <li class="zh">在 TF-IDF 流程中，mRMR 特徵選取比互資訊（Mutual Information, MI）更有效率。</li>
+  </ul>
+</section>
+
+<section id="method">
+  <h2><span class="en">Methodology at a Glance</span><span class="zh">方法論一覽</span></h2>
+  <div class="pipeline">
+    <span class="step"><span class="en">📥 Data collection</span><span class="zh">📥 資料蒐集</span></span><span class="arrow">→</span>
+    <span class="step"><span class="en">🧹 Text preprocessing</span><span class="zh">🧹 文本前處理</span></span><span class="arrow">→</span>
+    <span class="step"><span class="en">🔧 TF-IDF / Word2Vec features</span><span class="zh">🔧 TF-IDF / Word2Vec 特徵</span></span><span class="arrow">→</span>
+    <span class="step"><span class="en">🤖 4 classifiers</span><span class="zh">🤖 4 種分類器</span></span><span class="arrow">→</span>
+    <span class="step"><span class="en">📊 Statistical testing</span><span class="zh">📊 統計檢定</span></span><span class="arrow">→</span>
+    <span class="step"><span class="en">💡 Business insights</span><span class="zh">💡 商業洞察</span></span>
+  </div>
+  <p class="en">Two text-representation tracks — <strong>TF-IDF</strong> (with MI and mRMR feature selection at 258–1,292 dimensions) and <strong>Word2Vec Skip-gram</strong> (100/200/300 dimensions) — were each combined with SVM (Linear / RBF), Random Forest, and XGBoost. All 13 feature sets are hybrid: text features plus 22 metadata features (brand, chipset, VRAM, review length, etc.). Every configuration was evaluated over 30 repeats of stratified 10-fold cross-validation.</p>
+  <p class="zh">兩條文本表示路線——<strong>TF-IDF</strong>（搭配 MI 與 mRMR 特徵選取，258–1,292 維）與 <strong>Word2Vec Skip-gram</strong>（100/200/300 維）——分別搭配 SVM（Linear / RBF）、Random Forest 與 XGBoost。全部 13 組特徵集皆為混合特徵：文本特徵加上 22 個 metadata 特徵（品牌、晶片、VRAM、評論長度等）。每組配置均以 30 次重複的分層 10-fold 交叉驗證評估。</p>
+</section>
+
+<section id="results">
+  <h2><span class="en">Key Results</span><span class="zh">關鍵結果</span></h2>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr>
+      <th><span class="en">Objective</span><span class="zh">目標</span></th>
+      <th><span class="en">Best configuration</span><span class="zh">最佳配置</span></th>
+      <th><span class="en">Performance</span><span class="zh">表現</span></th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="en">Max negative-review detection (Recall)</span><span class="zh">負評偵測最大化（召回率）</span></td>
+        <td>Word2Vec 300d + XGBoost</td><td class="best">Recall = 0.735</td>
+      </tr>
+      <tr>
+        <td><span class="en">Balanced performance (F1)</span><span class="zh">平衡表現（F1）</span></td>
+        <td>Word2Vec 300d + SVM RBF</td><td class="best">F1 = 0.694</td>
+      </tr>
+      <tr>
+        <td><span class="en">Best TF-IDF baseline (Recall)</span><span class="zh">TF-IDF 最佳基準（召回率）</span></td>
+        <td>mRMR 258d + SVM Linear</td><td>Recall = 0.626</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <figure>
+    <img src="assets/performance_comparison.png" alt="Negative-review recall: Word2Vec vs. TF-IDF" loading="lazy">
+    <figcaption>
+      <span class="en">Negative-review recall across classifiers: Word2Vec consistently beats the best TF-IDF pipelines.</span>
+      <span class="zh">各分類器的負評召回率：Word2Vec 全面優於最佳 TF-IDF 流程。</span>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/recall_f1_tradeoff.png" alt="Recall vs. F1 trade-off across all 52 configurations" loading="lazy">
+    <figcaption>
+      <span class="en">Recall vs. F1 across all 52 configurations — two deployment profiles: recall-first monitoring vs. balanced classification.</span>
+      <span class="zh">52 組配置的召回率–F1 分佈——兩種部署取向：召回率優先的監控型 vs. 平衡型分類。</span>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/dimensionality_decay.png" alt="Performance vs. TF-IDF dimensionality" loading="lazy">
+    <figcaption>
+      <span class="en">Adding TF-IDF dimensions yields diminishing (and for SVM, negative) returns — low-dimensional mRMR sets are the sweet spot.</span>
+      <span class="zh">TF-IDF 維度增加報酬遞減（對 SVM 甚至是負報酬）——低維 mRMR 特徵集是甜蜜點。</span>
+    </figcaption>
+  </figure>
+
+  <figure>
+    <img src="assets/feature_importance_top15.png" alt="Top-15 feature importance (mRMR 258, SVM)" loading="lazy">
+    <figcaption>
+      <span class="en">Top-15 feature importance (thesis Fig. 6.2.1): review length (Tokens) and chipset metadata rank alongside sentiment words.</span>
+      <span class="zh">Top-15 特徵重要性（論文圖 6.2.1）：評論長度（Tokens）與晶片 metadata 特徵和情感詞彙並列。</span>
+    </figcaption>
+  </figure>
+
+  <div class="callout">
+    <p class="en"><strong>Statistical rigor:</strong> Friedman test — Recall: χ²(51) = 11,827; F1: χ²(51) = 9,811.3, both p &lt; 0.001. Dunn's post-hoc test (Holm correction) confirmed the top-performing group is dominated by Word2Vec configurations.</p>
+    <p class="zh"><strong>統計嚴謹性：</strong>Friedman 檢定——召回率：χ²(51) = 11,827；F1：χ²(51) = 9,811.3，皆 p &lt; 0.001。Dunn's 事後檢定（Holm 校正）確認最佳表現群組由 Word2Vec 配置主導。</p>
+  </div>
+</section>
+
+<section id="business">
+  <h2><span class="en">Business Applications</span><span class="zh">商業應用</span></h2>
+  <div class="cards">
+    <div class="card">
+      <span class="pill"><span class="en">Automation</span><span class="zh">自動化</span></span>
+      <h4><span class="en">Automated review monitoring</span><span class="zh">自動化評論監控</span></h4>
+      <p class="en">Deploy Word2Vec + SVM RBF / XGBoost as a real-time sentiment engine across e-commerce platforms — replacing manual review reading at scale.</p>
+      <p class="zh">以 Word2Vec + SVM RBF / XGBoost 作為即時情感引擎，部署於電商平台——大規模取代人工逐篇閱讀評論。</p>
+    </div>
+    <div class="card">
+      <span class="pill"><span class="en">Market intelligence</span><span class="zh">市場情報</span></span>
+      <h4><span class="en">Cross-platform brand-health tracking</span><span class="zh">跨平台品牌健康度追蹤</span></h4>
+      <p class="en">Key terms ("coil whine", "dead arrival", "refund", "RMA") form a monitoring dictionary for CRM, social media, forums, and video comments.</p>
+      <p class="zh">關鍵詞（coil whine、dead arrival、refund、RMA）可作為監控詞典，應用於 CRM、社群媒體、論壇與影音留言。</p>
+    </div>
+    <div class="card">
+      <span class="pill"><span class="en">Product</span><span class="zh">產品優化</span></span>
+      <h4><span class="en">Product improvement insights</span><span class="zh">產品改善洞察</span></h4>
+      <p class="en">Negative-review clustering surfaces actionable themes: hardware defects (coil whine), DOA, thermals, and power/case compatibility.</p>
+      <p class="zh">負評聚類揭露可行動的主題：硬體瑕疵（coil whine）、到貨即故障（DOA）、散熱問題、電源與機殼相容性。</p>
+    </div>
+    <div class="card">
+      <span class="pill"><span class="en">Competitive</span><span class="zh">競品分析</span></span>
+      <h4><span class="en">Competitive benchmarking</span><span class="zh">競品比較</span></h4>
+      <p class="en">The framework compares consumer sentiment across brands (MSI vs. ASUS vs. GIGABYTE) and product tiers (RTX 4060 → 4090).</p>
+      <p class="zh">本框架可比較跨品牌（MSI vs. ASUS vs. GIGABYTE）與跨產品階層（RTX 4060 → 4090）的消費者情感。</p>
+    </div>
+  </div>
+</section>
+
+<section id="docs">
+  <h2><span class="en">Read the Full Work</span><span class="zh">完整文件</span></h2>
+  <p class="en">All documentation is bilingual (English / Traditional Chinese) on GitHub:</p>
+  <p class="zh">所有文件於 GitHub 皆提供雙語版本（English／繁體中文）：</p>
+  <ul>
+    <li><a class="inline" href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews/blob/main/PAPER.md" target="_blank" rel="noopener">PAPER</a> — <span class="en">condensed, business-oriented thesis (~18 pages)</span><span class="zh">精簡商業導向論文（約 18 頁）</span></li>
+    <li><a class="inline" href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews/blob/main/METHODOLOGY.md" target="_blank" rel="noopener">METHODOLOGY</a> — <span class="en">full technical methodology, formulas &amp; hyperparameters</span><span class="zh">完整技術方法論、公式與超參數</span></li>
+    <li><a class="inline" href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews/blob/main/RESULTS.md" target="_blank" rel="noopener">RESULTS</a> — <span class="en">all 52 model configurations &amp; statistical tests</span><span class="zh">全部 52 組模型配置與統計檢定</span></li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p>
+    <span class="en">Kai-Tih Hong (洪凱迪) · M.S. in Statistics, National Taipei University ·
+      <a href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/kaitih-hong-6289b164" target="_blank" rel="noopener">LinkedIn</a></span>
+    <span class="zh">洪凱迪 Kai-Tih Hong · 國立臺北大學統計學系碩士 ·
+      <a href="https://github.com/iambakr/tfidf-vs-word2vec-gpu-reviews" target="_blank" rel="noopener">GitHub</a> ·
+      <a href="https://www.linkedin.com/in/kaitih-hong-6289b164" target="_blank" rel="noopener">LinkedIn</a></span>
+  </p>
+  <p style="margin-top:.5rem">
+    <span class="en">Code released under the MIT License. Findings © the original thesis — please cite.</span>
+    <span class="zh">程式碼採 MIT License 釋出。研究結果版權屬原論文——引用請註明出處。</span>
+  </p>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.documentElement.classList.remove('en','zh');
+    document.documentElement.classList.add(lang);
+    document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-Hant' : 'en');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-zh').classList.toggle('active', lang === 'zh');
+    document.title = lang === 'zh'
+      ? 'TF-IDF vs. Word2Vec — GPU 評論情感分類 | 洪凱迪'
+      : 'TF-IDF vs. Word2Vec — GPU Review Sentiment Classification | Kai-Tih Hong';
+    try{ localStorage.setItem('lang', lang); }catch(e){}
+  }
+  (function(){
+    var saved = null;
+    try{ saved = localStorage.getItem('lang'); }catch(e){}
+    var lang = saved || ((navigator.language || '').toLowerCase().indexOf('zh') === 0 ? 'zh' : 'en');
+    setLang(lang === 'zh' ? 'zh' : 'en');
+  })();
+</script>
+
+</body>
+</html>
