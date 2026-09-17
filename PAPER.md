@@ -1,8 +1,8 @@
 **English** | [繁體中文](./PAPER.zh-TW.md)
 
-# TF-IDF vs. Word2Vec for Sentiment Classification of Technical Product Reviews
+# Comparative Analysis of TF-IDF and Word2Vec for Text Classification
 
-### A Case Study on 2,989 Amazon Reviews of NVIDIA RTX 40 Series Graphics Cards
+### A Case of NVIDIA RTX 40 Series of Graphics Card Reviews on Amazon
 
 **Author:** Kai-Tih Hong (洪凱迪) · Executive MBA in Statistics, National Taipei University · July 2025
 **Advisor:** Dr. Yi-Ting Hwang

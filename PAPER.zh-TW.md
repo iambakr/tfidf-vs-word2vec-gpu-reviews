@@ -1,8 +1,8 @@
 [English](./PAPER.md) | **繁體中文**
 
-# TF-IDF vs. Word2Vec：技術性產品評論的情感分類比較研究
+# 比較 TF-IDF 與詞嵌入模型的文本分類效果
 
-### 以 2,989 篇 Amazon NVIDIA RTX 40 系列顯示卡評論為例
+### 以 Amazon NVIDIA RTX 40 系列顯卡評論為例
 
 **作者：** 洪凱迪（Kai-Tih Hong）· 國立臺北大學統計學系碩士在職專班 · 2025 年 7 月
 **指導教授：** 黃怡婷 博士

@@ -1,8 +1,8 @@
 **English** | [繁體中文](./README.zh-TW.md) | 🌐 [Interactive bilingual page](https://iambakr.github.io/tfidf-vs-word2vec-gpu-reviews/)
 
-# 📊 Comparative Analysis of TF-IDF vs. Word2Vec for Sentiment Classification
+# 📊 Comparative Analysis of TF-IDF and Word2Vec for Text Classification
 
-### A Case Study on NVIDIA RTX 40 Series GPU Reviews from Amazon
+### A Case of NVIDIA RTX 40 Series of Graphics Card Reviews on Amazon
 
 > **Master's Thesis** ｜ Executive Master's Program, Department of Statistics, National Taipei University  
 > **Author:** Kai-Tih Hong (洪凱迪)  
