@@ -4,7 +4,7 @@
 
 ### A Case Study on 2,989 Amazon Reviews of NVIDIA RTX 40 Series Graphics Cards
 
-**Author:** Kai-Tih Hong (洪凱迪) · M.S. in Statistics, National Taipei University · July 2025
+**Author:** Kai-Tih Hong (洪凱迪) · Executive MBA in Statistics, National Taipei University · July 2025
 **Advisor:** Dr. Yi-Ting Hwang
 
 > **TL;DR** — On jargon-dense GPU reviews, semantic word embeddings beat classic frequency-based features: the best Word2Vec model detected **73.5%** of negative reviews vs. **62.6%** for the best TF-IDF model on the held-out test set (a **+17% relative improvement**), a result validated across 300 cross-validation splits with Friedman + Dunn's tests. The pipeline doubles as a market-intelligence engine: it automatically surfaced "coil whine," dead-on-arrival, and refund friction as the dominant drivers of negative sentiment.
@@ -217,4 +217,4 @@ Nothing in the pipeline is GPU-specific. To transfer it to another domain (lapto
 
 ---
 
-*This document is a condensed, business-oriented adaptation of the author's Master's thesis (100 pages, National Taipei University, Department of Statistics, 2025). Full statistical tables (52-model benchmarks across all dimensionalities) are published in [`RESULTS.md`](./RESULTS.md); the complete methodology is in [`METHODOLOGY.md`](./METHODOLOGY.md). The analysis was conducted in R — see this repository's `src/` directory.*
+*This document is a condensed, business-oriented adaptation of the author's master's thesis, “Comparative Analysis of TF-IDF and Word2Vec for Text Classification: A Case of NVIDIA RTX 40 Series of Graphics Card Reviews on Amazon” (100 pages, Executive Master's Program, Department of Statistics, National Taipei University, 2025). Full statistical tables (52-model benchmarks across all dimensionalities) are published in [`RESULTS.md`](./RESULTS.md); the complete methodology is in [`METHODOLOGY.md`](./METHODOLOGY.md). The analysis was conducted in R — see this repository's `src/` directory.*

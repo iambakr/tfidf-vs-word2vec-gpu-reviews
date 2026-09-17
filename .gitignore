@@ -18,3 +18,12 @@ Thumbs.db
 
 # Raw data (only the anonymized sample in data/ is public)
 data/raw/
+
+# Job search & personal career files — NEVER commit (repo is public)
+.claude/
+career/
+job_search_tracker.csv
+job_scraper/
+upskill/
+cv/
+cover_letters/

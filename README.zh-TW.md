@@ -4,7 +4,7 @@
 
 ### 以 Amazon 上 NVIDIA RTX 40 系列顯示卡評論為個案研究
 
-> **碩士論文** ｜ 國立臺北大學統計學系  
+> **碩士論文** ｜ 國立臺北大學統計學系碩士在職專班  
 > **作者：** 洪凱迪（Kai-Tih Hong）  
 > **指導教授：** 黃怡婷 博士（Dr. Yi-Ting Hwang）  
 > **日期：** 2025 年 7 月
@@ -242,9 +242,9 @@ flowchart TD
 ## 👤 關於作者
 
 **洪凱迪（Kai-Tih Hong）**  
-國立臺北大學統計學系碩士（2025）
+國立臺北大學統計學系碩士在職專班（2025）
 
-🔗 [LinkedIn](https://www.linkedin.com/in/kaitih-hong-6289b164)   
+🔗 [LinkedIn](https://www.linkedin.com/in/kaitih-hong)   
 
 ### 核心能力
 - **自然語言處理** — 文本前處理、特徵工程、詞嵌入

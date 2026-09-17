@@ -4,7 +4,7 @@
 
 ### A Case Study on NVIDIA RTX 40 Series GPU Reviews from Amazon
 
-> **碩士論文** ｜ 國立臺北大學統計學系  
+> **碩士論文** ｜ 國立臺北大學統計學系碩士在職專班  
 > **Author:** Kai-Tih Hong (洪凱迪)  
 > **Advisor:** Dr. Yi-Ting Hwang (黃怡婷 博士)  
 > **Date:** July 2025
@@ -243,9 +243,9 @@ the real 2,989-review corpus, which is not redistributed — see [`data/README.m
 ## 👤 About the Author
 
 **Kai-Tih Hong (洪凱迪)**  
-M.S. in Statistics, National Taipei University (2025)
+Executive MBA in Statistics, National Taipei University (2025)
 
-🔗 [LinkedIn](https://www.linkedin.com/in/kaitih-hong-6289b164)   
+🔗 [LinkedIn](https://www.linkedin.com/in/kaitih-hong)   
 
 ### Core Competencies
 - **Natural Language Processing** — Text preprocessing, feature engineering, word embeddings
