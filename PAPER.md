@@ -1,8 +1,6 @@
 **English** | [繁體中文](./PAPER.zh-TW.md)
 
-# Comparative Analysis of TF-IDF and Word2Vec for Text Classification
-
-### A Case of NVIDIA RTX 40 Series of Graphics Card Reviews on Amazon
+# Comparative Analysis of TF-IDF and Word2Vec for Text Classification: A Case of NVIDIA RTX 40 Series of Graphics Card Reviews on Amazon
 
 **Author:** Kai-Tih Hong (洪凱迪) · Executive MBA in Statistics, National Taipei University · July 2025
 **Advisor:** Dr. Yi-Ting Hwang

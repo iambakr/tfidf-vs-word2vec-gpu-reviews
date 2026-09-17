@@ -1,8 +1,6 @@
 [English](./README.md) | **繁體中文** | 🌐 [互動式雙語頁面](https://iambakr.github.io/tfidf-vs-word2vec-gpu-reviews/)
 
-# 📊 比較 TF-IDF 與詞嵌入模型的文本分類效果
-
-### 以 Amazon NVIDIA RTX 40 系列顯卡評論為例
+# 📊 比較 TF-IDF 與詞嵌入模型的文本分類效果：以 Amazon NVIDIA RTX 40 系列顯卡評論為例
 
 > **碩士論文** ｜ 國立臺北大學統計學系碩士在職專班  
 > **作者：** 洪凱迪（Kai-Tih Hong）  
