@@ -4,7 +4,7 @@
 
 ### A Case Study on NVIDIA RTX 40 Series GPU Reviews from Amazon
 
-> **碩士論文** ｜ 國立臺北大學統計學系碩士在職專班  
+> **Master's Thesis** ｜ Executive Master's Program, Department of Statistics, National Taipei University  
 > **Author:** Kai-Tih Hong (洪凱迪)  
 > **Advisor:** Dr. Yi-Ting Hwang (黃怡婷 博士)  
 > **Date:** July 2025
